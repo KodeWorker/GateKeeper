@@ -22,15 +22,19 @@ class EXPORT GateKeeper
         bool ActivateSL(std::string);
         bool VerifySL(std::string);
     private:
-        int n_zero = 8;
+        int record_count = 5;
         int key_size = 3072;
         std::string private_key;
         std::string software_lock_path;
         bool LoadPrivateKey();
         std::string GeneratePublicKey();
-        bool DurationCheck();
-        bool ExecutionCountCheck();
+        bool DurationCheck(std::chrono::time_point<std::chrono::system_clock>,
+                           std::chrono::time_point<std::chrono::system_clock>,
+                           std::vector<std::chrono::time_point<std::chrono::system_clock>>,
+                           std::chrono::duration<int, std::ratio<24*60*60>>);
+        bool ExecutionCountCheck(int, int);
         std::string TimePointToString(std::chrono::time_point<std::chrono::system_clock>);
+        std::chrono::time_point<std::chrono::system_clock> StringToTimePoint(std::string);
 };
 
 #endif // GATEKEEPER_HPP
