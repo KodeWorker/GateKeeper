@@ -6,9 +6,9 @@ int main(int, char**)
 {
     Config config;
     config.generated_date = std::chrono::system_clock::now();
-    config.duration = std::chrono::duration<int, std::ratio<24*60*60>>(30); // 30 days    
-    config.activated_limit = 10;
-    config.signature = 1;
+    config.duration = 30; // 30 days    
+    config.limit = 10; // 10 times
+    config.signature = 1; // ID
 
     GateKeeper gatekeeper;
     gatekeeper.GenerateSL(config, "test.sl");

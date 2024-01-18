@@ -16,7 +16,7 @@ std::string GetPrivateKey()
 }
 
 
-std::string GeneratePublicKey()
+std::string GetPublicKey()
 {
     std::vector<char> char_vector;
     for(int i = 0; i < RESOURCE_PUBLIC_KEY_len; i++)

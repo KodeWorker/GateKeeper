@@ -12,8 +12,8 @@ const int RECORD_COUNT = 5;
 struct EXPORT Config
 {
     std::chrono::time_point<std::chrono::system_clock> generated_date;
-    std::chrono::duration<int, std::ratio<24*60*60>> duration; // days
-    int activated_limit;
+    int duration; // days
+    int limit; // activations
     unsigned signature;
 };
 

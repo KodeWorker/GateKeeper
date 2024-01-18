@@ -21,7 +21,7 @@ GateKeeper::~GateKeeper()
 
 void GateKeeper::GenerateSL(Config config, std::string path)
 {
-    std::string public_key = GeneratePublicKey();
+    std::string public_key = GetPublicKey();
 
     CryptoPP::RSA::PublicKey rsa_public_key;
     CryptoPP::StringSource public_key_source(public_key, true);
@@ -31,10 +31,10 @@ void GateKeeper::GenerateSL(Config config, std::string path)
     nlohmann::json info;
 
     info["generated_date"] = TimePointToString(config.generated_date);
-    info["duration_days"] = config.duration.count();
+    info["duration_days"] = config.duration;
     info["activated_dates"] = {TimePointToString(config.generated_date)};
     info["activated_count"] = 0;
-    info["activated_limit"] = config.activated_limit;
+    info["activated_limit"] = config.limit;
     info["signature"] = config.signature;
     
     std::string token = info.dump(4);
@@ -64,7 +64,7 @@ bool GateKeeper::ActivateSL(std::string path, unsigned signature)
 
     int cipher_size = key_size / 8;
     std::string cipher_token = ciphertext.substr(0, cipher_size);
-    std::string public_key = GeneratePublicKey();
+    std::string public_key = GetPublicKey();
     // Decrypt SL
     CryptoPP::AutoSeededRandomPool rng;
     CryptoPP::RSA::PrivateKey rsa_private_key;
@@ -200,7 +200,7 @@ bool Guard::Activate(unsigned signature)
 {
     int cipher_size = key_size / 8;
     std::string cipher_token = ciphertext.substr(0, cipher_size);
-    std::string public_key = GeneratePublicKey();
+    std::string public_key = GetPublicKey();
     // Decrypt SL
     CryptoPP::AutoSeededRandomPool rng;
     CryptoPP::RSA::PrivateKey rsa_private_key;
