@@ -1,5 +1,7 @@
 project(${ROOT_PROJECT_NAME}_app)
 
+set(CMAKE_INSTALL_RPATH "${BIN_DIR}")
+
 file(GLOB SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
                  ${CMAKE_CURRENT_SOURCE_DIR}/*.cc
                  ${CMAKE_CURRENT_SOURCE_DIR}/*.c)
