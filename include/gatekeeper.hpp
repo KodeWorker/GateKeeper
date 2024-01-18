@@ -11,6 +11,7 @@ struct EXPORT Config
     std::chrono::time_point<std::chrono::system_clock> generated_date;
     std::chrono::duration<int, std::ratio<24*60*60>> duration; // days
     int activated_limit;
+    unsigned signature;
 };
 
 class EXPORT GateKeeper
@@ -19,8 +20,8 @@ class EXPORT GateKeeper
         GateKeeper();
         ~GateKeeper();
         void GenerateSL(Config, std::string);
-        bool ActivateSL(std::string);
-        bool VerifySL(std::string);
+        bool ActivateSL(std::string, unsigned);
+        bool VerifySL(std::string, unsigned);
     private:
         int record_count = 5;
         int key_size = 3072;

@@ -39,6 +39,7 @@ void GateKeeper::GenerateSL(Config config, std::string path)
     info["activated_dates"] = {TimePointToString(config.generated_date)};
     info["activated_count"] = 0;
     info["activated_limit"] = config.activated_limit;
+    info["signature"] = config.signature;
     
     std::string token = info.dump(4);
 
@@ -57,7 +58,7 @@ void GateKeeper::GenerateSL(Config config, std::string path)
     out.close();
 }
 
-bool GateKeeper::ActivateSL(std::string path)
+bool GateKeeper::ActivateSL(std::string path, unsigned signature)
 {
     // Parse SL sections
     std::ifstream in(path);
@@ -93,6 +94,7 @@ bool GateKeeper::ActivateSL(std::string path)
     
     internal_config.activated_count = info["activated_count"];
     internal_config.activated_limit = info["activated_limit"];
+    internal_config.signature = info["signature"];
     // Modify activated info
     internal_config.activated_count++;
     std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
@@ -101,7 +103,8 @@ bool GateKeeper::ActivateSL(std::string path)
     activated_dates_vector.push_back(TimePointToString(now));
     
     if(!DurationCheck(now, internal_config.generated_date, internal_config.activated_dates, internal_config.duration) ||
-       !ExecutionCountCheck(internal_config.activated_count, internal_config.activated_limit))
+       !ExecutionCountCheck(internal_config.activated_count, internal_config.activated_limit) ||
+       internal_config.signature != signature)
         return false;
 
     // rewrite SL
@@ -112,6 +115,7 @@ bool GateKeeper::ActivateSL(std::string path)
         latest_activated_dates = std::vector<std::string>(activated_dates_vector.begin(), activated_dates_vector.end());
     info["activated_dates"] = latest_activated_dates;
     info["activated_count"] = internal_config.activated_count;
+    
     std::string token = info.dump(4);
 
     //Encrypt token
@@ -132,7 +136,7 @@ bool GateKeeper::ActivateSL(std::string path)
     return true;
 }
 
-bool GateKeeper::VerifySL(std::string path)
+bool GateKeeper::VerifySL(std::string path, unsigned signature)
 {
     // Parse SL sections
     std::ifstream in(path);
@@ -168,12 +172,14 @@ bool GateKeeper::VerifySL(std::string path)
     
     internal_config.activated_count = info["activated_count"];
     internal_config.activated_limit = info["activated_limit"];
+    internal_config.signature = info["signature"];
     // Modify activated info
     std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
     internal_config.activated_dates.push_back(now);
     
     if(!DurationCheck(now, internal_config.generated_date, internal_config.activated_dates, internal_config.duration) ||
-       !ExecutionCountCheck(internal_config.activated_count, internal_config.activated_limit))
+       !ExecutionCountCheck(internal_config.activated_count, internal_config.activated_limit) ||
+       internal_config.signature != signature)
         return false;
     else
         return true;

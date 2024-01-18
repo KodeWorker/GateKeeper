@@ -11,6 +11,7 @@ struct InternalConfig
     std::vector<std::chrono::time_point<std::chrono::system_clock>> activated_dates;
     int activated_count;
     int activated_limit;
+    unsigned signature;
 };
 
 #endif // INTERNAL_CONFIG
