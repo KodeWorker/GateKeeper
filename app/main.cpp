@@ -7,7 +7,6 @@ int main(int, char**)
     Config config;
     config.generated_date = std::chrono::system_clock::now();
     config.duration = std::chrono::duration<int, std::ratio<24*60*60>>(30); // 30 days
-    config.activated_count = 0;
     config.activated_limit = 10;
 
     GateKeeper gatekeeper;

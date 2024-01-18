@@ -1,5 +1,7 @@
 project(${ROOT_PROJECT_NAME})
 
+#set(${CMAKE_CXX_FLAGS} "${CMAKE_CXX_FLAGS} -mssse")
+
 #embed private key
 set(gen_filename private_key)
 set(output_c "#include \"private_key.h\"")
@@ -36,9 +38,25 @@ file(GLOB SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
 file(GLOB HEADER ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp
                  ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
 
-include_directories(${CMAKE_SOURCE_DIR}/include)
+file(GLOB CRYPTOPP ${CMAKE_SOURCE_DIR}/3rdparty/cryptopp/*.h
+                   ${CMAKE_SOURCE_DIR}/3rdparty/cryptopp/*.cpp
+                   ${CMAKE_SOURCE_DIR}/3rdparty/cryptopp/*.S
+                   ${CMAKE_SOURCE_DIR}/3rdparty/cryptopp-pem/*.cpp
+                   ${CMAKE_SOURCE_DIR}/3rdparty/cryptopp-pem/*.cxx
+                   ${CMAKE_SOURCE_DIR}/3rdparty/cryptopp-pem/*.h)
 
-add_library(${PROJECT_NAME} SHARED ${SOURCE} ${HEADER})
+list(FILTER CRYPTOPP EXCLUDE REGEX "test")
+list(FILTER CRYPTOPP EXCLUDE REGEX "validat")
+list(FILTER CRYPTOPP EXCLUDE REGEX "bench")
+
+add_definitions(-DCRYPTOPP_DISABLE_ASM=1)
+add_definitions(-DCRYPTOPP_ADHOC_MAIN)
+
+include_directories(${CMAKE_SOURCE_DIR}/include)
+include_directories(${CMAKE_SOURCE_DIR}/3rdparty)
+include_directories(${CMAKE_SOURCE_DIR}/3rdparty/cryptopp) # for building cryptopp-pem
+
+add_library(${PROJECT_NAME} SHARED ${SOURCE} ${HEADER} ${CRYPTOPP})
 #target_link_libraries(${PROJECT_NAME} ...)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE CXX)

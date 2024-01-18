@@ -1,0 +1,9 @@
+[submodule "3rdparty/cryptopp"]
+	path = 3rdparty/cryptopp
+	url = https://github.com/weidai11/cryptopp.git
+[submodule "3rdparty/cryptopp-pem"]
+	path = 3rdparty/cryptopp-pem
+	url = https://github.com/noloader/cryptopp-pem.git
+[submodule "3rdparty/json"]
+	path = 3rdparty/json
+	url = https://github.com/nlohmann/json.git

@@ -9,6 +9,9 @@ set(KEY_DIR ${PROJECT_SOURCE_DIR}/key)
 
 set(${CMAKE_MODULE_PATH} ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 
+add_subdirectory(3rdparty/json)
+include_directories(${CMAKE_SOURCE_DIR}/3rdparty/json/include)
+
 add_subdirectory(src)
 add_subdirectory(test)
 add_subdirectory(app)
