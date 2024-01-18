@@ -15,7 +15,14 @@ int main(int, char**)
     bool is_activated = gatekeeper.ActivateSL("test.sl", 1);
     bool is_verified = gatekeeper.VerifySL("test.sl", 1);
 
-    std::cout << "is_activated: " << is_activated << std::endl;
-    std::cout << "is_verified: " << is_verified << std::endl;
+    std::cout << "GateKeeper is_activated: " << is_activated << std::endl;
+    std::cout << "GateKeeper is_verified: " << is_verified << std::endl;
+    
+    Guard guard("test.sl");
+    is_activated = guard.Activate(1);
+    is_verified = guard.Verify(1);
+
+    std::cout << "Guard is_activated: " << is_activated << std::endl;
+    std::cout << "Guard is_verified: " << is_verified << std::endl;
     return 0;
 }

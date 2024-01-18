@@ -6,6 +6,9 @@
 #include <chrono>
 #include "export.hpp"
 
+const int KEY_SIZE = 3072;
+const int RECORD_COUNT = 5;
+
 struct EXPORT Config
 {
     std::chrono::time_point<std::chrono::system_clock> generated_date;
@@ -23,19 +26,23 @@ class EXPORT GateKeeper
         bool ActivateSL(std::string, unsigned);
         bool VerifySL(std::string, unsigned);
     private:
-        int record_count = 5;
-        int key_size = 3072;
-        std::string private_key;
-        std::string software_lock_path;
-        bool LoadPrivateKey();
-        std::string GeneratePublicKey();
-        bool DurationCheck(std::chrono::time_point<std::chrono::system_clock>,
-                           std::chrono::time_point<std::chrono::system_clock>,
-                           std::vector<std::chrono::time_point<std::chrono::system_clock>>,
-                           std::chrono::duration<int, std::ratio<24*60*60>>);
-        bool ExecutionCountCheck(int, int);
-        std::string TimePointToString(std::chrono::time_point<std::chrono::system_clock>);
-        std::chrono::time_point<std::chrono::system_clock> StringToTimePoint(std::string);
+        int record_count = RECORD_COUNT;
+        int key_size = KEY_SIZE;
+        std::string GeneratePublicKey();        
+};
+
+class EXPORT Guard
+{
+    public:
+        Guard(std::string);
+        ~Guard();
+        bool Activate(unsigned);
+        bool Verify(unsigned);
+    private:
+        int record_count = RECORD_COUNT;
+        int key_size = KEY_SIZE;
+        std::string path;
+        std::string ciphertext;
 };
 
 #endif // GATEKEEPER_HPP
