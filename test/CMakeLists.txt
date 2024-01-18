@@ -18,15 +18,10 @@ enable_testing()
 
 file(GLOB SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
                  ${CMAKE_CURRENT_SOURCE_DIR}/*.cc
-                 ${CMAKE_CURRENT_SOURCE_DIR}/*.c
-                 ${CMAKE_SOURCE_DIR}/src/*.cpp
-                 ${CMAKE_SOURCE_DIR}/src/*.cc
-                 ${CMAKE_SOURCE_DIR}/src/*.c)
+                 ${CMAKE_CURRENT_SOURCE_DIR}/*.c)
 
 file(GLOB HEADER ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp
-                 ${CMAKE_CURRENT_SOURCE_DIR}/*.h
-                 ${CMAKE_SOURCE_DIR}/src/*.hpp
-                 ${CMAKE_SOURCE_DIR}/src/*.h)
+                 ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
 
 include_directories(${CMAKE_SOURCE_DIR}/include)
 add_executable(${PROJECT_NAME} ${SOURCE} ${HEADER})

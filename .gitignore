@@ -1,3 +1,5 @@
 build/
 key/
 bin/
+src/private_key.h
+src/public_key.c

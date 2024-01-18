@@ -7,6 +7,13 @@
 
 ## Description
 
+### Instruction
+1. Generate RSA private key with corresponding length (3072)
+```
+mkdir key && cd key
+openssl genrsa -out private-key.pem 3072
+```
+
 ## Project Structure
 
 ## Progress
