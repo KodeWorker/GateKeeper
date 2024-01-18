@@ -12,6 +12,7 @@
 ```
 mkdir key
 openssl genrsa -out key/private-key.pem 3072
+openssl rsa -pubout -in key/private-key.pem -out key/public-key.pem
 ```
 2. Build and install GateKeeper
 ```

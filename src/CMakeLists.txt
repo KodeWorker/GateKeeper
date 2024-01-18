@@ -27,6 +27,7 @@ function(EMBED_RESOURCE read_file var_name)
 endfunction()
 
 EMBED_RESOURCE(${CMAKE_SOURCE_DIR}/key/private-key.pem RESOURCE_PRIVATE_KEY)
+EMBED_RESOURCE(${CMAKE_SOURCE_DIR}/key/public-key.pem RESOURCE_PUBLIC_KEY)
 set(output_h "${output_h}\n#endif\n")
 file(WRITE ${CMAKE_CURRENT_SOURCE_DIR}/${gen_filename}.h "${output_h}")
 file(WRITE ${CMAKE_CURRENT_SOURCE_DIR}/${gen_filename}.c "${output_c}")

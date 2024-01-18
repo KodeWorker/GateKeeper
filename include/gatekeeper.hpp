@@ -27,8 +27,7 @@ class EXPORT GateKeeper
         bool VerifySL(std::string, unsigned);
     private:
         int record_count = RECORD_COUNT;
-        int key_size = KEY_SIZE;
-        std::string GeneratePublicKey();        
+        int key_size = KEY_SIZE;    
 };
 
 class EXPORT Guard

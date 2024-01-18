@@ -1,14 +1,14 @@
+#include "gatekeeper.hpp"
+#include "internal_config.hpp"
+#include "checker.hpp"
+#include "resource.hpp"
+
 #include <fstream>
 #include <nlohmann/json.hpp>
 
 #include "cryptopp/rsa.h"
 #include "cryptopp/osrng.h"
 #include "cryptopp-pem/pem.h"
-
-#include "gatekeeper.hpp"
-#include "internal_config.hpp"
-#include "checker.hpp"
-#include "resource.hpp"
 
 GateKeeper::GateKeeper()
 {
@@ -25,7 +25,7 @@ void GateKeeper::GenerateSL(Config config, std::string path)
 
     CryptoPP::RSA::PublicKey rsa_public_key;
     CryptoPP::StringSource public_key_source(public_key, true);
-    rsa_public_key.Load(public_key_source);
+    CryptoPP::PEM_Load(public_key_source, rsa_public_key);
 
     // Convert Config to json token
     nlohmann::json info;
@@ -50,7 +50,7 @@ void GateKeeper::GenerateSL(Config config, std::string path)
 
     // Generate SL
     std::ofstream out(path);
-    out << cipher << public_key;
+    out << cipher;
     out.close();
 }
 
@@ -64,7 +64,7 @@ bool GateKeeper::ActivateSL(std::string path, unsigned signature)
 
     int cipher_size = key_size / 8;
     std::string cipher_token = ciphertext.substr(0, cipher_size);
-    std::string public_key = ciphertext.substr(cipher_size, ciphertext.size() - cipher_size);
+    std::string public_key = GeneratePublicKey();
     // Decrypt SL
     CryptoPP::AutoSeededRandomPool rng;
     CryptoPP::RSA::PrivateKey rsa_private_key;
@@ -118,7 +118,8 @@ bool GateKeeper::ActivateSL(std::string path, unsigned signature)
     std::string cipher;
     CryptoPP::RSA::PublicKey rsa_public_key;
     CryptoPP::StringSource public_key_source(public_key, true);
-    rsa_public_key.Load(public_key_source);
+    CryptoPP::PEM_Load(public_key_source, rsa_public_key);
+
     CryptoPP::RSAES_OAEP_SHA_Encryptor rsa_encrypt(rsa_public_key);
     // Encryption
     CryptoPP::StringSource ss_encrypt(token, true, 
@@ -127,7 +128,7 @@ bool GateKeeper::ActivateSL(std::string path, unsigned signature)
 
     // Generate SL
     std::ofstream out(path);
-    out << cipher << public_key;
+    out << cipher;
     out.close();
     return true;
 }
@@ -142,7 +143,6 @@ bool GateKeeper::VerifySL(std::string path, unsigned signature)
 
     int cipher_size = key_size / 8;
     std::string cipher_token = ciphertext.substr(0, cipher_size);
-    std::string public_key = ciphertext.substr(cipher_size, ciphertext.size() - cipher_size);
     // Decrypt SL
     CryptoPP::AutoSeededRandomPool rng;
     CryptoPP::RSA::PrivateKey rsa_private_key;
@@ -182,26 +182,6 @@ bool GateKeeper::VerifySL(std::string path, unsigned signature)
 
 }
 
-std::string GateKeeper::GeneratePublicKey()
-{
-    //Load private key
-    CryptoPP::RSA::PrivateKey rsa_private_key;
-    CryptoPP::StringSource ss(GetPrivateKey().c_str(), true);
-    CryptoPP::PEM_Load(ss, rsa_private_key);
-
-    // Create the corresponding public key
-    CryptoPP::Integer modulus = rsa_private_key.GetModulus();
-    CryptoPP::Integer public_exponent = rsa_private_key.GetPublicExponent();
-    CryptoPP::RSA::PublicKey rsa_public_key;
-    rsa_public_key.Initialize(modulus, public_exponent);
-
-    // Print or use the public key as needed
-    std::string public_key;
-    CryptoPP::StringSink public_key_sink(public_key);
-    rsa_public_key.DEREncode(public_key_sink);
-    return public_key;
-}
-
 Guard::Guard(std::string path)
 {
     // Parse SL sections
@@ -220,7 +200,7 @@ bool Guard::Activate(unsigned signature)
 {
     int cipher_size = key_size / 8;
     std::string cipher_token = ciphertext.substr(0, cipher_size);
-    std::string public_key = ciphertext.substr(cipher_size, ciphertext.size() - cipher_size);
+    std::string public_key = GeneratePublicKey();
     // Decrypt SL
     CryptoPP::AutoSeededRandomPool rng;
     CryptoPP::RSA::PrivateKey rsa_private_key;
@@ -274,7 +254,8 @@ bool Guard::Activate(unsigned signature)
     std::string cipher;
     CryptoPP::RSA::PublicKey rsa_public_key;
     CryptoPP::StringSource public_key_source(public_key, true);
-    rsa_public_key.Load(public_key_source);
+    CryptoPP::PEM_Load(public_key_source, rsa_public_key);
+
     CryptoPP::RSAES_OAEP_SHA_Encryptor rsa_encrypt(rsa_public_key);
     // Encryption
     CryptoPP::StringSource ss_encrypt(token, true, 
@@ -283,7 +264,7 @@ bool Guard::Activate(unsigned signature)
 
     // Generate SL
     std::ofstream out(path);
-    out << cipher << public_key;
+    out << cipher;
     out.close();
     return true;
 }
@@ -292,7 +273,6 @@ bool Guard::Verify(unsigned signature)
 {
     int cipher_size = key_size / 8;
     std::string cipher_token = ciphertext.substr(0, cipher_size);
-    std::string public_key = ciphertext.substr(cipher_size, ciphertext.size() - cipher_size);
     // Decrypt SL
     CryptoPP::AutoSeededRandomPool rng;
     CryptoPP::RSA::PrivateKey rsa_private_key;
